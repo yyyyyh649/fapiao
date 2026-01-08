@@ -39,6 +39,12 @@ python app.py
 
 应用将在 http://localhost:5000 启动
 
+开发模式（可选，仅用于开发调试）：
+```bash
+export FLASK_DEBUG=true
+python app.py
+```
+
 ## 使用说明
 
 1. **上传发票**
