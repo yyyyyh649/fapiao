@@ -13,8 +13,8 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Initialize PaddleOCR
-ocr = PaddleOCR(use_angle_cls=True, lang='ch', use_gpu=False)
+# Initialize PaddleOCR - will be lazy loaded on first use
+ocr = None
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -67,6 +67,11 @@ init_db()
 
 def extract_invoice_info(image_path):
     """Extract invoice information using OCR"""
+    global ocr
+    if ocr is None:
+        # Lazy load OCR to avoid initialization errors on startup
+        ocr = PaddleOCR(use_textline_orientation=True, lang='ch')
+    
     result = ocr.ocr(image_path, cls=True)
     
     # Extract all text
