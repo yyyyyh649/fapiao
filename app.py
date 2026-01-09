@@ -94,7 +94,7 @@ def extract_invoice_info(image_path):
     }
     
     # Extract invoice number (typically 8 digits)
-    invoice_num_pattern = r'发票号码.*?(\d{8})'
+    invoice_num_pattern = r'发票号码.*?(\d{8,20})'
     invoice_num_match = re.search(invoice_num_pattern, full_text)
     if invoice_num_match:
         invoice_data['invoice_number'] = invoice_num_match.group(1)
