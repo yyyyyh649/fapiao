@@ -5,297 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>发票管理系统</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* 保持原有的样式不变 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); max-width: 1200px; width: 100%; padding: 40px; }
+        h1 { text-align: center; color: #333; margin-bottom: 40px; font-size: 32px; }
+        .menu { display: none; }
+        .menu.active { display: block; }
+        .menu-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .menu-button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 30px 20px; border-radius: 15px; font-size: 20px; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .menu-button:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        .back-button { background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-bottom: 20px; }
+        .back-button:hover { background: #5a6268; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; }
+        .form-group input[type="text"], .form-group select, .form-group input[type="file"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+        .hint { font-size: 14px; color: #666; margin-top: 5px; }
+        .submit-button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; width: 100%; transition: opacity 0.3s; }
+        .submit-button:hover { opacity: 0.9; }
+        .submit-button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .type-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
+        .type-button { background: white; border: 3px solid #667eea; color: #667eea; padding: 20px; border-radius: 10px; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+        .type-button.selected { background: #667eea; color: white; }
+        .type-button:hover { transform: scale(1.05); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        table th { background: #667eea; color: white; font-weight: bold; cursor: pointer; user-select: none; }
+        table th:hover { background: #5a6fd1; }
+        table th span { font-size: 12px; margin-left: 5px; opacity: 0.8; }
+        table tr:hover { background: #f5f5f5; }
 
-        body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            padding: 40px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 40px;
-            font-size: 32px;
-        }
-
-        .menu {
-            display: none;
-        }
-
-        .menu.active {
-            display: block;
-        }
-
-        .menu-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .menu-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 30px 20px;
-            border-radius: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .menu-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .back-button {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: #5a6268;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"],
-        .form-group select,
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .hint {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .submit-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            width: 100%;
-            transition: opacity 0.3s;
-        }
-
-        .submit-button:hover {
-            opacity: 0.9;
-        }
-
-        .submit-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .type-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .type-button {
-            background: white;
-            border: 3px solid #667eea;
-            color: #667eea;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .type-button.selected {
-            background: #667eea;
-            color: white;
-        }
-
-        .type-button:hover {
-            transform: scale(1.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table th,
-        table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background: #667eea;
-            color: white;
-            font-weight: bold;
-        }
-
-        table tr:hover {
-            background: #f5f5f5;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .action-button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .action-button:hover {
-            opacity: 0.9;
-        }
-
-        .action-button.delete {
-            background: #dc3545;
-        }
-
-        .action-button.download {
-            background: #28a745;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-size: 18px;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .invoice-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .invoice-info h3 {
+        .action-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .action-button { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .action-button:hover { opacity: 0.9; }
+        .action-button.delete { background: #dc3545; }
+        .action-button.download { background: #28a745; }
+        .action-button.export { background: #ffc107; color: #333; }
+        
+        .summary-bar { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 5px solid #667eea;
             margin-bottom: 15px;
-            color: #667eea;
+            display: flex;
+            gap: 30px;
+            font-size: 16px;
         }
+        .summary-item strong { color: #667eea; font-size: 18px; }
 
-        .invoice-info p {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
+        .loading { text-align: center; padding: 20px; color: #667eea; font-size: 18px; }
+        .message { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; word-wrap: break-word;}
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+        /* 新增：警告/提示消息样式 */
+        .message.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; display: block; }
 
-        .invoice-info strong {
-            color: #333;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .menu-button {
-                padding: 20px 10px;
-                font-size: 16px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
-            table th,
-            table td {
-                padding: 8px;
-            }
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 18px;
-        }
+        .invoice-info { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .invoice-info h3 { margin-bottom: 15px; color: #667eea; }
+        .invoice-info p { margin-bottom: 10px; line-height: 1.6; }
+        .invoice-info strong { color: #333; }
+        @media (max-width: 768px) { .container { padding: 20px; } h1 { font-size: 24px; } .menu-button { padding: 20px 10px; font-size: 16px; } table { font-size: 14px; } table th, table td { padding: 8px; } .summary-bar { flex-direction: column; gap: 10px; } }
+        .no-data { text-align: center; padding: 40px; color: #666; font-size: 18px; }
+        
+        /* 批量上传结果列表样式 */
+        .batch-report ul { list-style-type: none; margin-top: 10px; }
+        .batch-report li { margin-bottom: 5px; font-size: 14px; }
+        .force-btn { background: #856404; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .force-btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -324,19 +103,21 @@
             <div id="uploadForm" style="display: none;">
                 <form id="invoiceForm" onsubmit="uploadInvoice(event)">
                     <div class="form-group">
-                        <label for="pdfFile">上传发票PDF</label>
-                        <input type="file" id="pdfFile" accept=".pdf" required>
+                        <label for="pdfFile">上传发票PDF (支持多选)</label>
+                        <!-- 修改点：添加 multiple 属性支持多选 -->
+                        <input type="file" id="pdfFile" accept=".pdf" required multiple>
                     </div>
 
                     <div class="form-group">
                         <label for="buyerName">购买人</label>
-                        <input type="text" id="buyerName" required>
-                        <div class="hint">自费请填写自己的名字</div>
+                        <input type="text" id="buyerName">
+                        <div class="hint">自费可选填自己的名字，不填也可以</div>
                     </div>
 
-                    <button type="submit" class="submit-button" id="uploadButton">上传并识别</button>
+                    <button type="submit" class="submit-button" id="uploadButton">批量上传并识别</button>
                 </form>
 
+                <!-- 单张识别结果（批量上传时不显示详细信息，只显示统计报告） -->
                 <div id="invoiceInfo" class="invoice-info" style="display: none;">
                     <h3>识别结果</h3>
                     <p><strong>发票号码：</strong><span id="infoInvoiceNumber"></span></p>
@@ -361,10 +142,16 @@
             </div>
 
             <div id="viewContent" style="display: none;">
+                <div class="summary-bar" id="summaryBar" style="display: none;">
+                    <div class="summary-item">当前列表总金额: <strong id="totalSum">0.00</strong> 元</div>
+                    <div class="summary-item">已选中金额: <strong id="selectedSum">0.00</strong> 元</div>
+                </div>
+
                 <div class="action-buttons">
                     <button class="action-button" onclick="selectAll()">全选</button>
                     <button class="action-button delete" onclick="deleteSelected()">删除选中</button>
-                    <button class="action-button download" onclick="downloadSelected()">下载选中PDF</button>
+                    <button class="action-button download" onclick="downloadSelected()">下载PDF</button>
+                    <button class="action-button export" onclick="exportExcel()">导出Excel</button>
                 </div>
 
                 <div id="invoiceTable"></div>
@@ -375,14 +162,16 @@
         <div id="recycleBinSection" class="menu">
             <button class="back-button" onclick="showMain()">返回主菜单</button>
             <div id="recycleBinMessage" class="message"></div>
-
             <div id="recycleBinTypeSelector" class="type-selector">
                 <button class="type-button" onclick="selectRecycleBinType('自费', event)">自费</button>
                 <button class="type-button" onclick="selectRecycleBinType('对公', event)">汇款</button>
             </div>
-
             <div id="recycleBinContent" style="display: none;">
                 <p class="hint">注意：回收站内容将在30天后自动清除</p>
+                <div class="action-buttons">
+                    <button class="action-button" onclick="selectAllRecycle()">全选</button>
+                    <button class="action-button delete" onclick="permanentDeleteSelected()">彻底删除选中</button>
+                </div>
                 <div id="recycleBinTable"></div>
             </div>
         </div>
@@ -393,23 +182,33 @@
         let currentViewType = '';
         let currentRecycleBinType = '';
         let invoices = [];
+        let currentSortField = 'created_at';
+        let currentSortOrder = 'DESC';
+        
+        // 存储重复文件列表，用于重试
+        let pendingDuplicates = [];
 
         function showMain() {
             document.querySelectorAll('.menu').forEach(menu => menu.classList.remove('active'));
             document.getElementById('mainMenu').classList.add('active');
         }
-
         function showUpload() {
             document.querySelectorAll('.menu').forEach(menu => menu.classList.remove('active'));
             document.getElementById('uploadSection').classList.add('active');
             document.getElementById('uploadForm').style.display = 'none';
             document.getElementById('uploadTypeSelector').style.display = 'grid';
-            document.querySelectorAll('#uploadTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('#uploadTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
             document.getElementById('invoiceForm').reset();
             document.getElementById('invoiceInfo').style.display = 'none';
             hideMessage('uploadMessage');
+        }
+        function showRecycleBin() {
+            document.querySelectorAll('.menu').forEach(menu => menu.classList.remove('active'));
+            document.getElementById('recycleBinSection').classList.add('active');
+            document.getElementById('recycleBinContent').style.display = 'none';
+            document.getElementById('recycleBinTypeSelector').style.display = 'grid';
+            document.querySelectorAll('#recycleBinTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
+            hideMessage('recycleBinMessage');
         }
 
         function showView() {
@@ -417,28 +216,13 @@
             document.getElementById('viewSection').classList.add('active');
             document.getElementById('viewContent').style.display = 'none';
             document.getElementById('viewTypeSelector').style.display = 'grid';
-            document.querySelectorAll('#viewTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('#viewTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
             hideMessage('viewMessage');
-        }
-
-        function showRecycleBin() {
-            document.querySelectorAll('.menu').forEach(menu => menu.classList.remove('active'));
-            document.getElementById('recycleBinSection').classList.add('active');
-            document.getElementById('recycleBinContent').style.display = 'none';
-            document.getElementById('recycleBinTypeSelector').style.display = 'grid';
-            document.querySelectorAll('#recycleBinTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            hideMessage('recycleBinMessage');
         }
 
         function selectUploadType(type, event) {
             currentUploadType = type;
-            document.querySelectorAll('#uploadTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('#uploadTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
             document.getElementById('uploadForm').style.display = 'block';
             document.getElementById('invoiceInfo').style.display = 'none';
@@ -446,76 +230,168 @@
 
         function selectViewType(type, event) {
             currentViewType = type;
-            document.querySelectorAll('#viewTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('#viewTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
             document.getElementById('viewContent').style.display = 'block';
+            
+            if (type === '自费') {
+                document.getElementById('summaryBar').style.display = 'flex';
+            } else {
+                document.getElementById('summaryBar').style.display = 'none';
+            }
+
+            currentSortField = 'created_at';
+            currentSortOrder = 'DESC';
             loadInvoices(type);
         }
 
         function selectRecycleBinType(type, event) {
             currentRecycleBinType = type;
-            document.querySelectorAll('#recycleBinTypeSelector .type-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('#recycleBinTypeSelector .type-button').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
             document.getElementById('recycleBinContent').style.display = 'block';
             loadRecycleBin(type);
         }
 
+        // --- 核心修改：批量上传逻辑 ---
         async function uploadInvoice(event) {
             event.preventDefault();
-
             const fileInput = document.getElementById('pdfFile');
             const buyerName = document.getElementById('buyerName').value;
             const uploadButton = document.getElementById('uploadButton');
+            const files = fileInput.files;
 
-            if (!fileInput.files[0]) {
+            if (files.length === 0) {
                 showMessage('uploadMessage', '请选择要上传的PDF文件', 'error');
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            formData.append('type', currentUploadType);
-            formData.append('buyer_name', buyerName);
-
+            // 禁用按钮，重置状态
             uploadButton.disabled = true;
-            uploadButton.textContent = '正在上传和识别...';
+            document.getElementById('invoiceInfo').style.display = 'none';
+            hideMessage('uploadMessage');
+            pendingDuplicates = []; // 清空重试队列
 
-            try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+            // 准备文件列表
+            let fileList = Array.from(files);
+            await processBatch(fileList, buyerName, uploadButton);
+        }
 
-                const result = await response.json();
+        async function processBatch(fileList, buyerName, uploadButton, force = false) {
+            let results = { success: [], duplicate: [], error: [] };
 
-                if (result.success) {
-                    showMessage('uploadMessage', '发票上传成功！', 'success');
-                    displayInvoiceInfo(result.data);
-                    document.getElementById('invoiceForm').reset();
-                } else {
-                    showMessage('uploadMessage', result.error || '上传失败', 'error');
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
+                uploadButton.textContent = `正在处理 (${i + 1}/${fileList.length}): ${file.name}`;
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('type', currentUploadType);
+                formData.append('buyer_name', buyerName);
+                if (force) {
+                    formData.append('force', 'true');
                 }
-            } catch (error) {
-                showMessage('uploadMessage', '上传失败: ' + error.message, 'error');
-            } finally {
-                uploadButton.disabled = false;
-                uploadButton.textContent = '上传并识别';
+
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        results.success.push({ name: file.name, data: result.data });
+                    } else if (response.status === 409) {
+                        // 记录重复文件，保存 file 对象以便重试
+                        results.duplicate.push({ name: file.name, msg: result.message, file: file });
+                    } else {
+                        results.error.push({ name: file.name, msg: result.error || '未知错误' });
+                    }
+                } catch (error) {
+                    results.error.push({ name: file.name, msg: error.message });
+                }
+            }
+
+            // 恢复按钮
+            uploadButton.disabled = false;
+            uploadButton.textContent = '批量上传并识别';
+
+            // 显示报告
+            showBatchReport(results);
+            
+            // 如果只有一张且成功，显示详细信息
+            if (results.success.length === 1 && results.duplicate.length === 0 && results.error.length === 0) {
+                displayInvoiceInfo(results.success[0].data);
             }
         }
 
-        function displayInvoiceInfo(data) {
-            document.getElementById('infoInvoiceNumber').textContent = data.invoice_number || '未识别';
-            document.getElementById('infoInvoiceDate').textContent = data.invoice_date || '未识别';
-            document.getElementById('infoTotalAmount').textContent = data.total_amount || '未识别';
-            document.getElementById('infoInvoiceContent').textContent = data.invoice_content || '未识别';
-            document.getElementById('infoSellerName').textContent = data.seller_name || '未识别';
-            document.getElementById('infoBankName').textContent = data.bank_name || '未识别';
-            document.getElementById('infoBankAccount').textContent = data.bank_account || '未识别';
-            document.getElementById('invoiceInfo').style.display = 'block';
+        function showBatchReport(results) {
+            const msgDiv = document.getElementById('uploadMessage');
+            let html = '';
+            
+            if (results.success.length > 0) {
+                html += `<div class="batch-report" style="color: green; margin-bottom: 10px;">
+                    ✅ 成功上传 ${results.success.length} 个文件
+                </div>`;
+            }
+            
+            if (results.duplicate.length > 0) {
+                // 保存到全局变量，供强制上传使用
+                pendingDuplicates = results.duplicate.map(d => d.file);
+                
+                html += `<div class="batch-report message warning">
+                    <strong>⚠️ 以下 ${results.duplicate.length} 个文件重复（已跳过）：</strong>
+                    <ul>
+                        ${results.duplicate.map(d => `<li>${d.name}: ${d.msg}</li>`).join('')}
+                    </ul>
+                    <button class="force-btn" onclick="retryDuplicates()">强制上传这些文件</button>
+                </div>`;
+            }
+            
+            if (results.error.length > 0) {
+                html += `<div class="batch-report message error">
+                    <strong>❌ 以下 ${results.error.length} 个文件失败：</strong>
+                    <ul>
+                        ${results.error.map(e => `<li>${e.name}: ${e.msg}</li>`).join('')}
+                    </ul>
+                </div>`;
+            }
+            
+            msgDiv.innerHTML = html;
+            msgDiv.style.display = 'block';
+            msgDiv.className = 'message'; // 重置基础样式
+        }
+
+        async function retryDuplicates() {
+            if (pendingDuplicates.length === 0) return;
+            
+            const buyerName = document.getElementById('buyerName').value;
+            const uploadButton = document.getElementById('uploadButton');
+            
+            uploadButton.disabled = true;
+            uploadButton.textContent = '正在强制上传...';
+            
+            // 复制一份并清空，防止重复点击
+            const filesToRetry = [...pendingDuplicates];
+            pendingDuplicates = [];
+            
+            await processBatch(filesToRetry, buyerName, uploadButton, true);
+        }
+
+        // ... (以下辅助函数保持不变：sortInvoices, loadInvoices, displayInvoices, exportExcel, displayInvoiceInfo 等) ...
+        function sortInvoices(field) {
+            if (currentSortField === field) {
+                currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+            } else {
+                currentSortField = field;
+                currentSortOrder = 'DESC';
+            }
+            loadInvoices(currentViewType);
+        }
+
+        function getSortIcon(field) {
+            if (currentSortField !== field) return '↕';
+            return currentSortOrder === 'ASC' ? '↑' : '↓';
         }
 
         async function loadInvoices(type) {
@@ -523,7 +399,7 @@
             tableContainer.innerHTML = '<div class="loading">正在加载...</div>';
 
             try {
-                const response = await fetch(`/api/invoices/${encodeURIComponent(type)}`);
+                const response = await fetch(`/api/invoices/${encodeURIComponent(type)}?sort_by=${currentSortField}&order=${currentSortOrder}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -537,35 +413,95 @@
             }
         }
 
+        function parseAmount(amountStr) {
+            if (!amountStr) return 0;
+            const cleanStr = amountStr.toString().replace(/,/g, '').replace(/¥/g, '');
+            const val = parseFloat(cleanStr);
+            return isNaN(val) ? 0 : val;
+        }
+
+        function calculateListTotal() {
+            let total = 0;
+            invoices.forEach(inv => {
+                total += parseAmount(inv.total_amount);
+            });
+            document.getElementById('totalSum').textContent = total.toFixed(2);
+        }
+
+        function calculateSelectedTotal() {
+            const checkboxes = document.querySelectorAll('.invoice-checkbox:checked');
+            let selectedTotal = 0;
+            checkboxes.forEach(cb => {
+                const amount = parseFloat(cb.getAttribute('data-amount')) || 0;
+                selectedTotal += amount;
+            });
+            document.getElementById('selectedSum').textContent = selectedTotal.toFixed(2);
+        }
+
         function displayInvoices(type) {
             const tableContainer = document.getElementById('invoiceTable');
 
             if (invoices.length === 0) {
                 tableContainer.innerHTML = '<div class="no-data">暂无数据</div>';
+                if (type === '自费') {
+                    document.getElementById('totalSum').textContent = '0.00';
+                    document.getElementById('selectedSum').textContent = '0.00';
+                }
                 return;
+            }
+
+            if (type === '自费') {
+                calculateListTotal();
+                document.getElementById('selectedSum').textContent = '0.00';
             }
 
             let tableHTML = '<table><thead><tr><th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>';
 
-            if (type === '自费') {
-                tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>发票内容</th><th>购买人</th>';
-            } else {
-                tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>购买人</th><th>发票内容</th><th>销售方户名</th><th>开户银行</th><th>银行账号</th>';
-            }
+            const headers = type === '自费' 
+                ? [
+                    {key: 'invoice_number', name: '发票号码'},
+                    {key: 'invoice_date', name: '开票日期'},
+                    {key: 'total_amount', name: '价税总金额'},
+                    {key: 'invoice_content', name: '发票内容'},
+                    {key: 'buyer_name', name: '购买人'},
+                    {key: 'created_at', name: '上传时间'}
+                  ]
+                : [
+                    {key: 'invoice_number', name: '发票号码'},
+                    {key: 'invoice_date', name: '开票日期'},
+                    {key: 'total_amount', name: '价税总金额'},
+                    {key: 'buyer_name', name: '购买人'},
+                    {key: 'invoice_content', name: '发票内容'},
+                    {key: 'seller_name', name: '销售方户名'},
+                    {key: 'bank_name', name: '开户银行'},
+                    {key: 'bank_account', name: '银行账号'}
+                  ];
+
+            headers.forEach(h => {
+                if (['invoice_content', 'bank_account', 'seller_name'].includes(h.key)) {
+                    tableHTML += `<th>${h.name}</th>`;
+                } else {
+                    tableHTML += `<th onclick="sortInvoices('${h.key}')" style="cursor:pointer" title="点击排序">
+                        ${h.name} <span>${getSortIcon(h.key)}</span>
+                    </th>`;
+                }
+            });
 
             tableHTML += '</tr></thead><tbody>';
 
             invoices.forEach(invoice => {
+                const rawAmount = parseAmount(invoice.total_amount);
                 tableHTML += `<tr>
-                    <td><input type="checkbox" class="invoice-checkbox" value="${invoice.id}" data-pdf="${invoice.pdf_path}"></td>`;
-
+                    <td><input type="checkbox" class="invoice-checkbox" value="${invoice.id}" data-pdf="${invoice.pdf_path}" data-amount="${rawAmount}" onchange="calculateSelectedTotal()"></td>`;
+                
                 if (type === '自费') {
                     tableHTML += `
                         <td>${invoice.invoice_number || '-'}</td>
                         <td>${invoice.invoice_date || '-'}</td>
                         <td>${invoice.total_amount || '-'}</td>
                         <td>${invoice.invoice_content || '-'}</td>
-                        <td>${invoice.buyer_name || '-'}</td>`;
+                        <td>${invoice.buyer_name || '-'}</td>
+                        <td>${invoice.created_at ? invoice.created_at.substring(0, 16) : '-'}</td>`;
                 } else {
                     tableHTML += `
                         <td>${invoice.invoice_number || '-'}</td>
@@ -577,7 +513,6 @@
                         <td>${invoice.bank_name || '-'}</td>
                         <td>${invoice.bank_account || '-'}</td>`;
                 }
-
                 tableHTML += '</tr>';
             });
 
@@ -585,161 +520,147 @@
             tableContainer.innerHTML = tableHTML;
         }
 
+        function exportExcel() {
+            window.location.href = `/api/export/${encodeURIComponent(currentViewType)}`;
+        }
+
+        function displayInvoiceInfo(data) {
+            document.getElementById('infoInvoiceNumber').textContent = data.invoice_number || '未识别';
+            document.getElementById('infoInvoiceDate').textContent = data.invoice_date || '未识别';
+            document.getElementById('infoTotalAmount').textContent = data.total_amount || '未识别';
+            document.getElementById('infoInvoiceContent').textContent = data.invoice_content || '未识别';
+            document.getElementById('infoSellerName').textContent = data.seller_name || '未识别';
+            document.getElementById('infoBankName').textContent = data.bank_name || '未识别';
+            document.getElementById('infoBankAccount').textContent = data.bank_account || '未识别';
+            document.getElementById('invoiceInfo').style.display = 'block';
+        }
+
         function toggleSelectAll() {
             const selectAllCheckbox = document.getElementById('selectAllCheckbox');
             const checkboxes = document.querySelectorAll('.invoice-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
+            checkboxes.forEach(checkbox => { 
+                checkbox.checked = selectAllCheckbox.checked; 
             });
+            calculateSelectedTotal();
         }
 
         function selectAll() {
             const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.checked = true;
-                toggleSelectAll();
-            }
+            if (selectAllCheckbox) { selectAllCheckbox.checked = true; toggleSelectAll(); }
         }
 
         async function deleteSelected() {
             const checkboxes = document.querySelectorAll('.invoice-checkbox:checked');
-
-            if (checkboxes.length === 0) {
-                showMessage('viewMessage', '请选择要删除的发票', 'error');
-                return;
-            }
-
-            if (!confirm('确定要删除选中的发票吗？')) {
-                return;
-            }
-
+            if (checkboxes.length === 0) { showMessage('viewMessage', '请选择要删除的发票', 'error'); return; }
+            if (!confirm('确定要删除选中的发票吗？')) { return; }
             const ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
             try {
-                const response = await fetch('/api/invoices/delete', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ids })
-                });
-
+                const response = await fetch('/api/invoices/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
                 const result = await response.json();
-
-                if (result.success) {
-                    showMessage('viewMessage', '删除成功', 'success');
-                    loadInvoices(currentViewType);
-                } else {
-                    showMessage('viewMessage', result.error || '删除失败', 'error');
-                }
-            } catch (error) {
-                showMessage('viewMessage', '删除失败: ' + error.message, 'error');
-            }
+                if (result.success) { showMessage('viewMessage', '删除成功', 'success'); loadInvoices(currentViewType); } 
+                else { showMessage('viewMessage', result.error || '删除失败', 'error'); }
+            } catch (error) { showMessage('viewMessage', '删除失败: ' + error.message, 'error'); }
         }
 
         async function downloadSelected() {
             const checkboxes = document.querySelectorAll('.invoice-checkbox:checked');
-
-            if (checkboxes.length === 0) {
-                showMessage('viewMessage', '请选择要下载的发票', 'error');
-                return;
-            }
-
+            if (checkboxes.length === 0) { showMessage('viewMessage', '请选择要下载的发票', 'error'); return; }
             checkboxes.forEach(checkbox => {
                 const pdfPath = checkbox.getAttribute('data-pdf');
-                if (pdfPath) {
-                    const link = document.createElement('a');
-                    link.href = `/api/download/${pdfPath}`;
-                    link.download = pdfPath;
-                    link.click();
-                }
+                if (pdfPath) { const link = document.createElement('a'); link.href = `/api/download/${pdfPath}`; link.download = pdfPath; link.click(); }
             });
-
             showMessage('viewMessage', '开始下载...', 'success');
         }
 
         async function loadRecycleBin(type) {
             const tableContainer = document.getElementById('recycleBinTable');
             tableContainer.innerHTML = '<div class="loading">正在加载...</div>';
-
             try {
                 const response = await fetch(`/api/recycle-bin/${encodeURIComponent(type)}`);
                 const result = await response.json();
-
-                if (result.success) {
-                    displayRecycleBin(result.data, type);
-                } else {
-                    tableContainer.innerHTML = '<div class="no-data">加载失败</div>';
-                }
-            } catch (error) {
-                tableContainer.innerHTML = '<div class="no-data">加载失败: ' + error.message + '</div>';
-            }
+                if (result.success) { displayRecycleBin(result.data, type); } 
+                else { tableContainer.innerHTML = '<div class="no-data">加载失败</div>'; }
+            } catch (error) { tableContainer.innerHTML = '<div class="no-data">加载失败: ' + error.message + '</div>'; }
         }
 
         function displayRecycleBin(data, type) {
             const tableContainer = document.getElementById('recycleBinTable');
-
-            if (data.length === 0) {
-                tableContainer.innerHTML = '<div class="no-data">回收站为空</div>';
-                return;
-            }
-
-            let tableHTML = '<table><thead><tr>';
-
-            if (type === '自费') {
-                tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>发票内容</th><th>购买人</th><th>删除时间</th>';
-            } else {
-                tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>购买人</th><th>发票内容</th><th>销售方户名</th><th>开户银行</th><th>银行账号</th><th>删除时间</th>';
-            }
-
+            if (data.length === 0) { tableContainer.innerHTML = '<div class="no-data">回收站为空</div>'; return; }
+            let tableHTML = '<table><thead><tr><th><input type="checkbox" id="selectAllRecycleCheckbox" onchange="toggleSelectAllRecycle()"></th>';
+            if (type === '自费') { tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>发票内容</th><th>购买人</th><th>删除时间</th>'; } 
+            else { tableHTML += '<th>发票号码</th><th>开票日期</th><th>价税总金额</th><th>购买人</th><th>发票内容</th><th>销售方户名</th><th>开户银行</th><th>银行账号</th><th>删除时间</th>'; }
             tableHTML += '</tr></thead><tbody>';
-
             data.forEach(invoice => {
                 tableHTML += '<tr>';
-
-                if (type === '自费') {
-                    tableHTML += `
-                        <td>${invoice.invoice_number || '-'}</td>
-                        <td>${invoice.invoice_date || '-'}</td>
-                        <td>${invoice.total_amount || '-'}</td>
-                        <td>${invoice.invoice_content || '-'}</td>
-                        <td>${invoice.buyer_name || '-'}</td>
-                        <td>${invoice.deleted_at || '-'}</td>`;
-                } else {
-                    tableHTML += `
-                        <td>${invoice.invoice_number || '-'}</td>
-                        <td>${invoice.invoice_date || '-'}</td>
-                        <td>${invoice.total_amount || '-'}</td>
-                        <td>${invoice.buyer_name || '-'}</td>
-                        <td>${invoice.invoice_content || '-'}</td>
-                        <td>${invoice.seller_name || '-'}</td>
-                        <td>${invoice.bank_name || '-'}</td>
-                        <td>${invoice.bank_account || '-'}</td>
-                        <td>${invoice.deleted_at || '-'}</td>`;
-                }
-
+                tableHTML += `<td><input type="checkbox" class="recycle-checkbox" value="${invoice.id}"></td>`;
+                if (type === '自费') { tableHTML += `<td>${invoice.invoice_number || '-'}</td><td>${invoice.invoice_date || '-'}</td><td>${invoice.total_amount || '-'}</td><td>${invoice.invoice_content || '-'}</td><td>${invoice.buyer_name || '-'}</td><td>${invoice.deleted_at || '-'}</td>`; } 
+                else { tableHTML += `<td>${invoice.invoice_number || '-'}</td><td>${invoice.invoice_date || '-'}</td><td>${invoice.total_amount || '-'}</td><td>${invoice.buyer_name || '-'}</td><td>${invoice.invoice_content || '-'}</td><td>${invoice.seller_name || '-'}</td><td>${invoice.bank_name || '-'}</td><td>${invoice.bank_account || '-'}</td><td>${invoice.deleted_at || '-'}</td>`; }
                 tableHTML += '</tr>';
             });
-
             tableHTML += '</tbody></table>';
             tableContainer.innerHTML = tableHTML;
         }
 
-        function showMessage(elementId, message, type) {
-            const messageElement = document.getElementById(elementId);
-            messageElement.textContent = message;
-            messageElement.className = 'message ' + type;
-            messageElement.style.display = 'block';
-
-            setTimeout(() => {
-                hideMessage(elementId);
-            }, 5000);
+        function toggleSelectAllRecycle() {
+            const selectAllCheckbox = document.getElementById('selectAllRecycleCheckbox');
+            const checkboxes = document.querySelectorAll('.recycle-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
         }
 
-        function hideMessage(elementId) {
-            const messageElement = document.getElementById(elementId);
-            messageElement.style.display = 'none';
+        function selectAllRecycle() {
+            const selectAllCheckbox = document.getElementById('selectAllRecycleCheckbox');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = true;
+                toggleSelectAllRecycle();
+            }
         }
+
+        async function permanentDeleteSelected() {
+            const checkboxes = document.querySelectorAll('.recycle-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showMessage('recycleBinMessage', '请选择要彻底删除的发票', 'error');
+                return;
+            }
+            if (!confirm('彻底删除后无法恢复，确定继续？')) {
+                return;
+            }
+            const ids = Array.from(checkboxes).map(cb => parseInt(cb.value, 10)).filter(Boolean);
+            try {
+                const response = await fetch('/api/recycle-bin/permanent-delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('recycleBinMessage', '彻底删除成功', 'success');
+                    loadRecycleBin(currentRecycleBinType);
+                } else {
+                    showMessage('recycleBinMessage', result.error || '删除失败', 'error');
+                }
+            } catch (error) {
+                showMessage('recycleBinMessage', '删除失败: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(elementId, message, type) { 
+            const messageElement = document.getElementById(elementId); 
+            // 批量上传报告可能是HTML，用innerHTML
+            if (message.includes('<div') || message.includes('<ul')) {
+                messageElement.innerHTML = message;
+            } else {
+                messageElement.textContent = message; 
+            }
+            messageElement.className = 'message ' + type; 
+            messageElement.style.display = 'block'; 
+            // 只有普通消息才自动隐藏，批量报告不自动隐藏
+            if (!message.includes('<div')) {
+                setTimeout(() => { hideMessage(elementId); }, 5000); 
+            }
+        }
+        function hideMessage(elementId) { const messageElement = document.getElementById(elementId); messageElement.style.display = 'none'; }
     </script>
 </body>
 </html>
